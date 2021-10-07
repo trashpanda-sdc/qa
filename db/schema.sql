@@ -123,3 +123,22 @@ UPDATE answers SET date = TO_TIMESTAMP( date_data / 1000 );
 
 ALTER TABLE questions DROP COLUMN date_data;
 ALTER TABLE answers DROP COLUMN date_data;
+
+-- ---
+-- update the autoincrement, serial, current value
+-- this is needed since the autoincrement value will be off
+-- due to the copy not adjusting the value as it seeds the data
+-- ---
+SELECT SETVAL('questions_question_id_seq', (SELECT MAX(question_id) + 1 FROM questions));
+SELECT SETVAL('answers_answer_id_seq', (SELECT MAX(answer_id) + 1 FROM answers));
+SELECT SETVAL('answers_photos_photo_id_seq', (SELECT MAX(photo_id) + 1 FROM answers_photos));
+
+-- ---
+-- Make program fun faster
+-- ---
+
+CREATE INDEX questions_id_idx ON questions (question_id);
+CREATE INDEX question_id_idx ON answers (question_id);
+CREATE INDEX answer_id_idx ON answers_photos (answers_id);
+
+-- insert into questions (product_id, body, asker_name, asker_email, reported, helpful, date) values ()
